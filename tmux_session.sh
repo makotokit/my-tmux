@@ -5,7 +5,11 @@ TMUX_SESSION="${PARENT_DIR_NAME}_tmux_session"
 
 if [ "$#" -ne 1 ]; then
   echo "Usage: $0 <create|delete|help>"
-  exit 1
+  # return 1を試みますが、スクリプトがsourceで実行されていない
+  # 通常のスクリプト実行のコンテキストではreturnが無効であるため、エラーが発生し、そのエラー
+  # は2>/dev/nullで無視されます。そして||（OR）演算子によりexit 1が実行され、
+  # これによりスクリプトが直接実行された場合にはシェル（またはターミナル）が終了します。
+  return 1 2>/dev/null || exit 1
 fi
 
 create_tmux_session() {
@@ -69,6 +73,6 @@ case $1 in
     ;;
   *)
     echo "Invalid argument. Please use 'create', 'delete' or 'help'."
-    exit 1
+    return 1 2>/dev/null || exit 1
     ;;
 esac
